@@ -32,7 +32,7 @@ st.write('''Esta aplicação tem como objetivo estimar o volume de novas instala
 st.markdown('### Como utilizar esta aplicação')
 st.write('''
 	1 - Na Tool, vá em Data Export e faça o download do arquivo Max Installs do app desejado. \n
-	2 - Faça o upload do arquivo no local indicado.\n
+	2 - Faça o upload do arquivo no local indicado abaixo.\n
 	3 - Escolha como deseja visualizar os dados de estimativa de downloads: Diário/Semanal/Mensal.\n
 	4 - Faça o download das estimativas.''')
 
