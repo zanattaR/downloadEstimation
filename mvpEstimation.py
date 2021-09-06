@@ -28,7 +28,13 @@ def get_table_download_link(df):
 st.markdown('## Download Estimation - MaxInstalls')
 st.write("")
 
-st.write('''Esta aplicação tem como objetivo estimar o volume de downloads de um aplicativo da Play Store.''')
+st.write('''Esta aplicação tem como objetivo estimar o volume de novas instalações de um aplicativo da Play Store.''')
+st.markdown('### Como utilizar esta aplicação')
+st.write('''
+	1 - Na Tool, vá em Data Export e faça o download do arquivo Max Installs do app desejado. \n
+	2 - Faça o upload do arquivo no local indicado.\n
+	3 - Escolha como deseja visualizar os dados de estimativa de downloads: Diário/Semanal/Mensal.\n
+	4 - Faça o download das estimativas.''')
 
 ####### Upload dataset #######
 st.subheader('Dados')
@@ -55,7 +61,7 @@ def diff_installs(df):
         diff_list.append(x)
     
     df_daily = df.iloc[1:].reset_index(drop=True)
-    df_daily['Diario'] = diff_list
+    df_daily['Installs'] = diff_list
     
     return df_daily
 
@@ -66,7 +72,7 @@ df_daily = diff_installs(df)
 def outlierDetect(df_daily):
     
     # Média e Desvio Padrão
-    data_mean, data_std = np.mean(df_daily['Diario']), np.std(df_daily['Diario'])
+    data_mean, data_std = np.mean(df_daily['Installs']), np.std(df_daily['Installs'])
     
     # Idendificando outliers
     cut_off = data_std * 3
@@ -74,26 +80,26 @@ def outlierDetect(df_daily):
     lower,upper = data_mean - cut_off, data_mean + cut_off
     
     # Substituindo outliers por 0
-    df_daily['Diario'] = np.where(df_daily['Diario'] > upper, 0.0,df_daily['Diario']).tolist()
-    df_daily['Diario'] = np.where(df_daily['Diario'] < lower, 0.0,df_daily['Diario']).tolist()
+    df_daily['Installs'] = np.where(df_daily['Installs'] > upper, 0.0,df_daily['Installs']).tolist()
+    df_daily['Installs'] = np.where(df_daily['Installs'] < lower, 0.0,df_daily['Installs']).tolist()
     
     ## Segunda substituição de outliers ##
     
     # Substituindo 0 por Nan
-    df_daily['Diario'] = df_daily['Diario'].replace(0.0, np.nan)
+    df_daily['Installs'] = df_daily['Installs'].replace(0.0, np.nan)
     
     # Média e Desvio padrão 2
-    data_mean_2, data_std_2 = np.mean(df_daily['Diario']), np.std(df_daily['Diario'])
+    data_mean_2, data_std_2 = np.mean(df_daily['Installs']), np.std(df_daily['Installs'])
     
     # Identificando os outliers 2
     lower_2, upper_2 = (data_mean_2 - (data_std_2 * 1)), (data_mean_2 + (data_std_2 * 1))
     
     # Substituindo outliers por 0
-    df_daily['Diario'] = np.where(df_daily['Diario'] > upper_2, 0.0, df_daily['Diario']).tolist()
-    df_daily['Diario'] = np.where(df_daily['Diario'] < lower_2, 0.0, df_daily['Diario']).tolist()
+    df_daily['Installs'] = np.where(df_daily['Installs'] > upper_2, 0.0, df_daily['Installs']).tolist()
+    df_daily['Installs'] = np.where(df_daily['Installs'] < lower_2, 0.0, df_daily['Installs']).tolist()
     
     # Substituindo 0 por Nan
-    df_daily['Diario'] = df_daily['Diario'].replace(0.0, np.nan)
+    df_daily['Installs'] = df_daily['Installs'].replace(0.0, np.nan)
     
     return df_daily
 
@@ -101,7 +107,7 @@ def outlierDetect(df_daily):
 df_out_clean = outlierDetect(df_daily)
 
 # Condição caso a primeira linha seja NaN
-while df_out_clean['Diario'].isnull()[0] == True:
+while df_out_clean['Installs'].isnull()[0] == True:
     df_out_clean = df_out_clean.iloc[1:,:]
     df_out_clean.reset_index(drop=True, inplace=True)
 
@@ -120,14 +126,14 @@ def impute(df_out_clean, col_name):
         df_out_clean.loc[first_na, col_name] = imputed
 
 # Aplicando função de preenchimento de valores nulos
-impute(df_out_clean, 'Diario')
+impute(df_out_clean, 'Installs')
 
 # Função para retroceder um dia na data
 def day_back(df_out_clean):
-    diario_real = df_out_clean['Diario'][1:]
+    diario_real = df_out_clean['Installs'][1:]
     diario_real.reset_index(drop=True, inplace=True)
     df_out_clean.drop(df_out_clean.index[-1], inplace=True)
-    df_out_clean['Diario'] = diario_real
+    df_out_clean['Installs'] = diario_real
 
 # Aplicando função para retroceder um dia na data
 day_back(df_out_clean)
@@ -136,24 +142,24 @@ day_back(df_out_clean)
 if st.checkbox('Gráfico diário'):
 
 	# Criando df final para plot
-	df_final = df_out_clean[['DATE','Diario']]
+	df_final = df_out_clean[['DATE','Installs']]
 	df_final['DATE'] = pd.to_datetime(df_final['DATE']).dt.date
 	df_final.set_index('DATE',inplace=True)
 
-	df_final['limit sup'] = df_final['Diario'] * 1.30
-	df_final['limit inf'] = df_final['Diario'] * .70
+	df_final['limit sup'] = df_final['Installs'] * 1.30
+	df_final['limit inf'] = df_final['Installs'] * .70
 
 	plt.figure(figsize=(16,7))
 	plt.title('Estimativa Diária - Intervalo de Confiança: 30%')
 
-	plt.plot(df_final['Diario'])
+	plt.plot(df_final['Installs'])
 	plt.fill_between(df_final.index,df_final['limit inf'],df_final['limit sup'], color='b', alpha=.1)
 	st.pyplot()
 
 	# Preparando para download
-	df_download = df_out_clean[['DATE','Diario']]
+	df_download = df_out_clean[['DATE','Installs']]
 	df_download['DATE'] = pd.to_datetime(df_download['DATE']).dt.date
-	df_download['Diario'] = df_download['Diario'].astype(int)
+	df_download['Installs'] = df_download['Installs'].astype(int)
 
 	st.write('Clique em Download para baixar os dados')
 	st.markdown(get_table_download_link(df_download), unsafe_allow_html=True)
@@ -161,17 +167,17 @@ if st.checkbox('Gráfico diário'):
 if st.checkbox('Gráfico Semanal'):
 
 	# Criando df final para plot
-	df_final = df_out_clean[['DATE','Diario']]
+	df_final = df_out_clean[['DATE','Installs']]
 	df_final_weekly = df_final.groupby(df_final['DATE'].dt.to_period('W-SAT')).sum()
 	df_final_weekly.index = df_final_weekly.index.astype(str)
 
-	df_final_weekly['limit sup'] = df_final_weekly['Diario'] * 1.15
-	df_final_weekly['limit inf'] = df_final_weekly['Diario'] * .85
+	df_final_weekly['limit sup'] = df_final_weekly['Installs'] * 1.15
+	df_final_weekly['limit inf'] = df_final_weekly['Installs'] * .85
 
 	plt.figure(figsize=(16,7))
 	plt.title('Estimativa de instalações no período')
 	
-	plt.plot(df_final_weekly['Diario'])
+	plt.plot(df_final_weekly['Installs'])
 	plt.xticks(rotation=45)
 	plt.title('Estimativa Semanal - Intervalo de Confiança: 15% ')
 	plt.fill_between(df_final_weekly.index,df_final_weekly['limit inf'],df_final_weekly['limit sup'], color='b', alpha=.1)
@@ -179,7 +185,7 @@ if st.checkbox('Gráfico Semanal'):
 
 	# Preparando para download
 	df_download = df_final_weekly.reset_index()
-	df_download['Diario'] = df_download['Diario'].astype(int)
+	df_download['Installs'] = df_download['Installs'].astype(int)
 	df_download['limit sup'] = df_download['limit sup'].astype(int)
 	df_download['limit inf'] = df_download['limit inf'].astype(int)
 
@@ -189,17 +195,17 @@ if st.checkbox('Gráfico Semanal'):
 if st.checkbox('Gráfico Mensal'):
 
 	# Criando df final para plot
-	df_final = df_out_clean[['DATE','Diario']]
+	df_final = df_out_clean[['DATE','Installs']]
 	df_final_monthly = df_final.groupby(df_final['DATE'].dt.to_period('M')).sum()
 	df_final_monthly.index = df_final_monthly.index.astype(str)
 
-	df_final_monthly['limit sup'] = df_final_monthly['Diario'] * 1.13
-	df_final_monthly['limit inf'] = df_final_monthly['Diario'] * .87
+	df_final_monthly['limit sup'] = df_final_monthly['Installs'] * 1.13
+	df_final_monthly['limit inf'] = df_final_monthly['Installs'] * .87
 
 	plt.figure(figsize=(16,7))
 	plt.title('Estimativa de instalações no período')
 	
-	plt.plot(df_final_monthly['Diario'])
+	plt.plot(df_final_monthly['Installs'])
 	plt.xticks(rotation=45)
 	plt.title('Estimativa Mensal - Intervalo de Confiança: 13% ')
 	plt.fill_between(df_final_monthly.index,df_final_monthly['limit inf'],df_final_monthly['limit sup'], color='b', alpha=.1)
@@ -207,7 +213,7 @@ if st.checkbox('Gráfico Mensal'):
 
 	# Preparando para download
 	df_download = df_final_monthly.reset_index()
-	df_download['Diario'] = df_download['Diario'].astype(int)
+	df_download['Installs'] = df_download['Installs'].astype(int)
 	df_download['limit sup'] = df_download['limit sup'].astype(int)
 	df_download['limit inf'] = df_download['limit inf'].astype(int)
 
