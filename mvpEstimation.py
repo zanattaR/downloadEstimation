@@ -8,7 +8,7 @@ import seaborn as sns
 import base64
 from io import BytesIO
 import locale
-locale.setlocale(locale.LC_ALL, 'pt_pt.UTF-8')
+locale.setlocale(locale.LC_ALL, 'pt_BR.UTF-8')
 
 
 st.set_option('deprecation.showPyplotGlobalUse', False)
