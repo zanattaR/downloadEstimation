@@ -63,10 +63,11 @@ st.video(video_bytes)
 
 st.markdown('### Arquivos necessários para o inserir na ferramenta: ')
 st.write('''
-	1 - Arquivo .csv das novas instalações baixado do Google Play Console na aba Estatísticas. (Apenas c/ o filtro de todos os países) \n
+	1 - Arquivo .csv das novas instalações baixado do Google Play Console na aba Estatísticas: para exportar clique em Exportar relatório (ou nos 3 pontos ao lado da data) e faça o download em Exportar série temporal (CSV) - (Apenas c/ o filtro de todos os países).  \n
 	2 - Arquivo .xlsx da Posição de Categoria baixado da Tool.\n
 	3 - Dois Arquivos .xlsx do Max Installs de apps concorrentes baixados da Tool. (Data Export) \n
 	4 - Certifique-se que o período dos coletados é o mesmo para todos os arquivos.''')
+st.markdown('##### Obs.: Utilize o próprio acesso da Tool para coletar os dados, pois o acesso do cliente agrega todos os competidores cadastrados')
 
 ############## Upload datasets ##############
 
