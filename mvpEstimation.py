@@ -63,14 +63,15 @@ st.video(video_bytes)
 
 st.markdown('### Arquivos necessários para o inserir na ferramenta: ')
 st.write('''
-	1 - Arquivo .csv das novas instalações baixado do Google Play Console. (Apenas c/ o filtro de todos os países) \n
+	1 - Arquivo .csv das novas instalações baixado do Google Play Console na aba Estatísticas. (Apenas c/ o filtro de todos os países) \n
 	2 - Arquivo .xlsx da Posição de Categoria baixado da Tool.\n
-	3 - Dois Arquivos .xlsx de apps concorrentes baixados da Tool. (Data Export) \n''')
+	3 - Dois Arquivos .xlsx do MAX Installs de apps concorrentes baixados da Tool. (Data Export) \n
+	4 - Certifique-se que o período dos coletados é o mesmo para todos os arquivos.''')
 
 ############## Upload datasets ##############
 
 st.markdown("## Dados do cliente")
-st.markdown("#### Instalações")
+st.markdown("#### Instalações - Arquivo .csv baixado do Console do seu cliente")
 
 nome_cliente = st.text_input('Insira o nome do app:', value='Cliente')
 data_cliente = st.file_uploader("Insira a base de dados aqui:", type='csv')
@@ -87,7 +88,7 @@ if data_cliente is not None:
 
 ########### Posição na Categoria ##########
 
-st.markdown("#### Posição na Categoria")
+st.markdown("#### Posição na Categoria - Arquivo .xlsx baixado da Tool")
 data_cat = st.file_uploader("Insira a base de dados aqui:", type='xlsx')
 
 if data_cat is not None:
@@ -99,7 +100,7 @@ if data_cat is not None:
 ########### Concorrente 1 ###########
 
 st.markdown("## Dados dos Concorrentes")
-st.markdown("#### Concorrente 1")
+st.markdown("#### Concorrente 1 - Arquivo .xlsx baixado da Tool")
 
 nome_comp_1 = st.text_input('Insira o nome do Concorrente 1:', value='Concorrente_1')
 data_comp_1 = st.file_uploader("Insira a base do Concorrente 1:", type='xlsx')
@@ -113,7 +114,7 @@ if data_comp_1 is not None:
 	
 ########### Concorrente 2 ###########
 
-st.markdown("#### Concorrente 2")
+st.markdown("#### Concorrente 2 - Arquivo .xlsx baixado da Tool")
 
 nome_comp_2 = st.text_input('Insira o nome do Concorrente 2:', value='Concorrente_2')
 data_comp_2 = st.file_uploader("Insira a base do Concorrente 2:", type='xlsx')
