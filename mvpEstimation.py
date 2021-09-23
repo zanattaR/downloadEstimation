@@ -65,7 +65,7 @@ st.markdown('### Arquivos necessários para o inserir na ferramenta: ')
 st.write('''
 	1 - Arquivo .csv das novas instalações baixado do Google Play Console na aba Estatísticas. (Apenas c/ o filtro de todos os países) \n
 	2 - Arquivo .xlsx da Posição de Categoria baixado da Tool.\n
-	3 - Dois Arquivos .xlsx do MAX Installs de apps concorrentes baixados da Tool. (Data Export) \n
+	3 - Dois Arquivos .xlsx do Max Installs de apps concorrentes baixados da Tool. (Data Export) \n
 	4 - Certifique-se que o período dos coletados é o mesmo para todos os arquivos.''')
 
 ############## Upload datasets ##############
